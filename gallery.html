@@ -9,12 +9,16 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
+<!-- Firebase -->
+<script type="module" src="firebase-config.js"></script>
+
 <style>
 html{scroll-behavior:smooth;}
 body{
 background:linear-gradient(135deg,#064e3b,#7f1d1d);
 font-family:'Hind Siliguri',sans-serif;
 color:white;
+margin:0;
 }
 
 /* NAV */
@@ -22,8 +26,43 @@ color:white;
 .nav-link.active::after,.nav-link:hover::after{
 content:"";position:absolute;left:0;bottom:0;width:100%;height:2px;background:#10b981;
 }
-#mobileMenu{display:none;}
-#mobileMenu.show{display:block;}
+
+/* RIGHT SLIDE MENU */
+#mobileMenu{
+position:fixed;
+top:0;
+right:-260px;
+width:240px;
+height:100%;
+background:#052e26;
+padding:30px 20px;
+transition:.4s ease;
+z-index:100;
+}
+#mobileMenu.show{right:0;}
+#mobileMenu a{
+display:block;
+padding:12px 0;
+border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+/* Overlay */
+#overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+opacity:0;
+visibility:hidden;
+transition:.3s;
+z-index:90;
+}
+#overlay.show{
+opacity:1;
+visibility:visible;
+}
 
 /* GALLERY CARD */
 .gallery-card{
@@ -36,9 +75,6 @@ box-shadow:0 0 25px rgba(16,185,129,.3);
 .gallery-card:hover{
 box-shadow:0 0 40px rgba(16,185,129,.7);
 transform:translateY(-8px);
-}
-.gallery-img{
-overflow:hidden;
 }
 .gallery-img img{
 transition:transform .6s ease;
@@ -53,19 +89,13 @@ transform:scale(1.15);
 50%{background-position:100% 50%;}
 100%{background-position:0% 50%;}
 }
-.footer-bg{
+.footer{
 background:linear-gradient(-45deg,#021f17,#052e26,#3f0f0f,#7f1d1d);
 background-size:400% 400%;
 animation:luxuryGradient 18s ease infinite;
 }
-.footer-glass{
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(20px);
-border-radius:25px;
-box-shadow:0 0 40px rgba(16,185,129,.25);
-}
 .social-icon{
-width:45px;height:45px;
+width:40px;height:40px;
 display:flex;align-items:center;justify-content:center;
 border-radius:50%;
 background:rgba(255,255,255,.08);
@@ -80,12 +110,19 @@ box-shadow:0 0 20px rgba(16,185,129,.7);
 
 <body>
 
+<!-- Overlay -->
+<div id="overlay"></div>
+
 <!-- HEADER -->
-<header class="bg-[#064e3b]/95 sticky top-0 z-50">
+<header class="bg-[#064e3b]/95 sticky top-0 z-40">
 <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+
+<div class="flex items-center gap-4">
+<img src="logo.png" class="w-12 h-12 rounded-full">
 <div>
-<h1 class="text-xl font-semibold text-emerald-400">আল-হেরা এসোসিয়েশন</h1>
-<p class="text-xs text-gray-300">Serving Humanity With Unity & Compassion</p>
+<h1 class="text-lg md:text-xl font-bold text-emerald-400">Al Hera Association</h1>
+<h3 class="text-xs text-yellow-400 text-right w-full">বদলে যাই, বদলে দেই</h3>
+</div>
 </div>
 
 <nav class="hidden md:flex space-x-8 text-sm">
@@ -97,10 +134,14 @@ box-shadow:0 0 20px rgba(16,185,129,.7);
 <a href="contact.html" class="nav-link">যোগাযোগ</a>
 </nav>
 
-<button id="menuBtn" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+<button id="menuBtn" class="md:hidden text-2xl">
+<i class="fas fa-bars"></i>
+</button>
 </div>
+</header>
 
-<div id="mobileMenu" class="bg-[#052e26] px-6 py-4 space-y-3 md:hidden">
+<!-- Mobile Drawer -->
+<div id="mobileMenu" class="md:hidden">
 <a href="index.html">Home</a>
 <a href="members.html">সদস্যবৃন্দ</a>
 <a href="gallery.html">গ্যালারি</a>
@@ -108,70 +149,161 @@ box-shadow:0 0 20px rgba(16,185,129,.7);
 <a href="form.html">সদস্য ফরম</a>
 <a href="contact.html">যোগাযোগ</a>
 </div>
-</header>
 
 <!-- GALLERY SECTION -->
-<section class="py-20 px-6">
-<h2 class="text-4xl text-center text-emerald-300 mb-14">গ্যালারি</h2>
+<section class="py-16 md:py-20 px-4 md:px-6">
+<h2 class="text-2xl md:text-4xl text-center text-emerald-300 mb-10 md:mb-14">গ্যালারি</h2>
 
-<div class="max-w-7xl mx-auto grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+<div id="galleryGrid"
+class="max-w-7xl mx-auto grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 
-<!-- 12 Demo Gallery Items -->
-<script>
-const galleryImages = [
-"https://images.unsplash.com/photo-1593113630400-ea4288922497",
-"https://images.unsplash.com/photo-1559027615-cd4628902d4a",
-"https://images.unsplash.com/photo-1526256262350-7da7584cf5eb",
-"https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca"
-];
+<!-- STATIC ITEMS -->
 
-for(let i=1;i<=12;i++){
-document.write(`
-<div class="gallery-card">
+<a href="#" class="gallery-card block">
 <div class="gallery-img">
-<img src="${galleryImages[i%4]}?w=600&h=400&fit=crop"
-class="w-full h-56 object-cover">
+<img src="https://images.unsplash.com/photo-1593113630400-ea4288922497?w=600&h=400&fit=crop"
+class="w-full h-48 md:h-56 object-cover">
 </div>
-<div class="p-5 text-center">
-<h3 class="text-lg font-semibold mb-2">কার্যক্রম ${i}</h3>
-<p class="text-sm text-gray-300">তারিখ: ২০২৬</p>
+<div class="p-4 md:p-5 text-center">
+<h3 class="text-base md:text-lg font-semibold mb-2">শীতবস্ত্র বিতরণ</h3>
+<p class="text-sm text-gray-300">তারিখ: জানুয়ারি ২০২৬</p>
 </div>
+</a>
+
+<a href="#" class="gallery-card block">
+<div class="gallery-img">
+<img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=600&h=400&fit=crop"
+class="w-full h-48 md:h-56 object-cover">
 </div>
-`);
-}
-</script>
+<div class="p-4 md:p-5 text-center">
+<h3 class="text-base md:text-lg font-semibold mb-2">রক্তদান কর্মসূচি</h3>
+<p class="text-sm text-gray-300">তারিখ: মার্চ ২০২৬</p>
+</div>
+</a>
+
+<a href="#" class="gallery-card block">
+<div class="gallery-img">
+<img src="https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?w=600&h=400&fit=crop"
+class="w-full h-48 md:h-56 object-cover">
+</div>
+<div class="p-4 md:p-5 text-center">
+<h3 class="text-base md:text-lg font-semibold mb-2">খাদ্য বিতরণ</h3>
+<p class="text-sm text-gray-300">তারিখ: এপ্রিল ২০২৬</p>
+</div>
+</a>
+
+<a href="#" class="gallery-card block">
+<div class="gallery-img">
+<img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=600&h=400&fit=crop"
+class="w-full h-48 md:h-56 object-cover">
+</div>
+<div class="p-4 md:p-5 text-center">
+<h3 class="text-base md:text-lg font-semibold mb-2">বৃক্ষরোপণ কর্মসূচি</h3>
+<p class="text-sm text-gray-300">তারিখ: জুন ২০২৬</p>
+</div>
+</a>
 
 </div>
 </section>
 
-<!-- FOOTER -->
-<footer class="footer-bg mt-20 py-16 px-6 text-gray-300">
-<div class="max-w-7xl mx-auto footer-glass p-10 grid md:grid-cols-3 gap-10">
+<footer class="footer mt-20">
+<div class="py-16">
+<div class="max-w-7xl mx-auto px-6">
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">
+
 <div>
-<h3 class="text-emerald-400 text-lg mb-4">আল-হেরা এসোসিয়েশন</h3>
-<p class="text-sm">মানবতার জন্য কাজ করে যাচ্ছে।</p>
+<h3 class="text-emerald-400 text-lg font-semibold mb-4">আল-হেরা এসোসিয়েশন</h3>
+<p class="text-sm">
+বদলে যাই, বদলে দেই
+</p>
 </div>
+
 <div>
-<h3 class="text-emerald-400 text-lg mb-4">যোগাযোগ</h3>
-<p>কালীগঞ্জ, বাংলাদেশ</p>
-<p>017XXXXXXXX</p>
-</div>
-<div>
-<h3 class="text-emerald-400 text-lg mb-4">সোশ্যাল</h3>
-<div class="flex space-x-4">
-<a href="#" class="social-icon text-blue-500"><i class="fa-brands fa-facebook-f"></i></a>
-<a href="#" class="social-icon text-pink-500"><i class="fa-brands fa-instagram"></i></a>
-<a href="#" class="social-icon text-red-600"><i class="fa-brands fa-youtube"></i></a>
+<h3 class="text-emerald-400 text-lg font-semibold mb-4">গুরুত্বপূর্ণ লিংক</h3>
+<div class="flex flex-col space-y-2 text-sm">
+<a href="index.html">Home</a>
+<a href="members.html">সদস্যবৃন্দ</a>
+<a href="donation.html">দান</a>
+<a href="contact.html">যোগাযোগ</a>
 </div>
 </div>
+
+<div class="md:text-right">
+<h3 class="text-emerald-400 text-lg font-semibold mb-4">যোগাযোগ</h3>
+<p class="text-sm">ছড়ান,মিঠাপুকুর,রংপুর</p>
+<p class="text-sm mb-4">মোবাইল: 01887536627</p>
+
+<div class="flex justify-center md:justify-end gap-4">
+<a href="https://www.facebook.com/alheraassociationbd" class="social-icon">
+<i class="fa-brands fa-facebook-f"></i>
+</a>
+<a href="#" class="social-icon">
+<i class="fa-brands fa-instagram"></i>
+</a>
+<a href="#" class="social-icon">
+<i class="fa-brands fa-youtube"></i>
+</a>
 </div>
-<div class="text-center mt-8 text-sm">© ২০২৬ | Developed by Ms Sujon Sarkar</div>
+</div>
+
+</div>
+
+<div class="mt-12 pt-6 border-t border-white/10 text-center text-sm">
+© 2026 Al-Hera Association |
+<span class="text-yellow-300 font-medium">Developed by Ms Sujon Sarkar</span>
+</div>
+
+</div>
+</div>
 </footer>
 
 <script>
-document.getElementById("menuBtn").addEventListener("click",()=>{
-document.getElementById("mobileMenu").classList.toggle("show");
+const menuBtn=document.getElementById("menuBtn");
+const mobileMenu=document.getElementById("mobileMenu");
+const overlay=document.getElementById("overlay");
+
+menuBtn.addEventListener("click",()=>{
+mobileMenu.classList.toggle("show");
+overlay.classList.toggle("show");
 });
+overlay.addEventListener("click",()=>{
+mobileMenu.classList.remove("show");
+overlay.classList.remove("show");
+});
+</script>
+
+<!-- Firebase Dynamic Gallery -->
+<script type="module">
+import { db } from "./firebase-config.js";
+import { collection, getDocs }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+async function loadGallery(){
+  const snapshot = await getDocs(collection(db,"gallery"));
+
+  snapshot.forEach((doc)=>{
+    const data = doc.data();
+
+    const card = `
+    <a href="#" class="gallery-card block">
+      <div class="gallery-img">
+        <img src="${data.imageURL}"
+        class="w-full h-48 md:h-56 object-cover">
+      </div>
+      <div class="p-4 md:p-5 text-center">
+        <h3 class="text-base md:text-lg font-semibold mb-2">${data.title}</h3>
+        <p class="text-sm text-gray-300">${data.date}</p>
+      </div>
+    </a>
+    `;
+
+    document.getElementById("galleryGrid")
+    .insertAdjacentHTML("beforeend", card);
+  });
+}
+
+window.onload=loadGallery;
 </script>
 
 </body>
