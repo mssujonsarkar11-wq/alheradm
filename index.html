@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>আল-হেরা এসোসিয়েশন</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+html{scroll-behavior:smooth;}
+body{
+margin:0;
+font-family:'Hind Siliguri',sans-serif;
+color:white;
+background:linear-gradient(135deg,#064e3b,#7f1d1d);
+}
+
+/* LOADER */
+.loader{
+position:fixed;
+width:100%;
+height:100%;
+background:#064e3b;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:9999;
+}
+.loader img{
+width:110px;
+animation:spin 2s linear infinite;
+}
+@keyframes spin{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
+}
+
+/* NAV */
+.nav-link{position:relative;padding-bottom:4px;}
+.nav-link.active::after,
+.nav-link:hover::after{
+content:"";
+position:absolute;
+left:0;
+bottom:0;
+width:100%;
+height:2px;
+background:#10b981;
+}
+
+/* HERO */
+.hero{
+padding:120px 20px;
+text-align:center;
+}
+
+/* BUTTON */
+.btn{
+position:relative;
+overflow:hidden;
+padding:14px 45px;
+border-radius:50px;
+font-weight:500;
+transition:.3s;
+}
+.btn-green{
+background:linear-gradient(135deg,#065f46,#10b981);
+box-shadow:0 0 20px rgba(16,185,129,.4);
+}
+.btn-red{
+background:linear-gradient(135deg,#7f1d1d,#b91c1c);
+box-shadow:0 0 20px rgba(185,28,28,.4);
+}
+.btn:hover{
+transform:translateY(-6px) scale(1.05);
+}
+.btn::before{
+content:"";
+position:absolute;
+top:0;
+left:-100%;
+width:100%;
+height:100%;
+background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent);
+transition:.6s;
+}
+.btn:hover::before{
+left:100%;
+}
+
+/* CARD */
+.glow-card{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(20px);
+border-radius:25px;
+padding:40px;
+transition:.3s;
+box-shadow:0 0 25px rgba(16,185,129,.3);
+}
+.glow-card:hover{
+transform:translateY(-12px);
+box-shadow:0 0 50px rgba(16,185,129,.6);
+}
+
+/* GLASS */
+.glass{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(25px);
+border-radius:30px;
+padding:50px;
+box-shadow:0 0 40px rgba(16,185,129,.25);
+}
+
+/* FOOTER */
+@keyframes gradientMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+.footer{
+background:linear-gradient(-45deg,#021f17,#052e26,#3f0f0f,#7f1d1d);
+background-size:400% 400%;
+animation:gradientMove 18s ease infinite;
+}
+
+.social-icon{
+width:44px;
+height:44px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:50%;
+background:rgba(255,255,255,.1);
+transition:.3s;
+}
+.social-icon:hover{
+transform:scale(1.15);
+box-shadow:0 0 20px rgba(16,185,129,.8);
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOADER -->
+<div id="loader" class="loader">
+<img src="logo.png">
+<p class="mt-6 text-emerald-400 text-lg">লোড হচ্ছে...</p>
+</div>
+
+<!-- HEADER -->
+<header class="bg-[#064e3b]/95 sticky top-0 z-50">
+<div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+<div class="flex items-center gap-4">
+<img src="logo.png" class="w-12 h-12 rounded-full">
+<div>
+<h1 class="text-xl font-semibold text-emerald-400">Al Hera Association</h1>
+<p class="text-xs text-gray-300">Serving Humanity With Unity & Compassion</p>
+</div>
+</div>
+
+<nav class="hidden md:flex space-x-8 text-sm">
+<a href="index.html" class="nav-link active">Home</a>
+<a href="members.html" class="nav-link">সদস্যবৃন্দ</a>
+<a href="gallery.html" class="nav-link">গ্যালারি</a>
+<a href="donation.html" class="nav-link">দান</a>
+<a href="form.html" class="nav-link">সদস্য ফরম</a>
+<a href="contact.html" class="nav-link">যোগাযোগ</a>
+</nav>
+</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+<h1 class="text-5xl md:text-6xl font-bold text-emerald-300 mb-6">
+আল-হেরা এসোসিয়েশন
+</h1>
+<p class="text-xl text-gray-200 mb-10">
+মানবতার পাশে, সেবার অঙ্গীকার
+</p>
+<div class="flex justify-center gap-6 flex-wrap">
+<a href="donation.html" class="btn btn-red">দান করুন</a>
+<a href="form.html" class="btn btn-green">সদস্য হন</a>
+</div>
+</section>
+
+<!-- ABOUT -->
+<section class="py-24 px-6 text-center">
+<h2 class="text-3xl text-emerald-300 mb-6">পরিচিতি ও লক্ষ্য</h2>
+<div class="w-24 h-1 bg-emerald-400 mx-auto mb-10"></div>
+<div class="max-w-4xl mx-auto glass">
+<p>
+আল-হেরা এসোসিয়েশন একটি মানবকল্যাণমূলক সংগঠন যা সমাজের অসহায় মানুষের পাশে দাঁড়ায়।
+আমরা চিকিৎসা সেবা, রক্তদান কর্মসূচি ও বিভিন্ন সামাজিক কার্যক্রম পরিচালনা করি।
+</p>
+</div>
+</section>
+
+<!-- ACTIVITIES -->
+<section class="py-24 px-6">
+<h2 class="text-3xl text-center text-emerald-300 mb-14">আমাদের কার্যক্রম</h2>
+<div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
+<div class="glow-card text-center">
+<i class="fa-solid fa-user-doctor text-3xl text-emerald-400 mb-5"></i>
+<h4 class="text-xl font-semibold">ফ্রি মেডিকেল ক্যাম্প</h4>
+<p class="text-gray-300 mt-3">দরিদ্র মানুষের জন্য বিনামূল্যে চিকিৎসা সেবা।</p>
+</div>
+<div class="glow-card text-center">
+<i class="fa-solid fa-droplet text-3xl text-emerald-400 mb-5"></i>
+<h4 class="text-xl font-semibold">রক্তদান কর্মসূচি</h4>
+<p class="text-gray-300 mt-3">নিয়মিত রক্তদান কার্যক্রম পরিচালনা।</p>
+</div>
+<div class="glow-card text-center">
+<i class="fa-solid fa-hand-holding-heart text-3xl text-emerald-400 mb-5"></i>
+<h4 class="text-xl font-semibold">শীতবস্ত্র বিতরণ</h4>
+<p class="text-gray-300 mt-3">অসহায় মানুষের মাঝে শীতবস্ত্র বিতরণ।</p>
+</div>
+</div>
+</section>
+
+<!-- STATS -->
+<section class="py-24 px-6 text-center">
+<h2 class="text-3xl text-emerald-300 mb-12">পরিসংখ্যান</h2>
+<div class="max-w-6xl mx-auto grid md:grid-cols-4 gap-10 glass">
+<div><h4 class="text-3xl text-emerald-400 font-bold">২৫০+</h4><p>সদস্য</p></div>
+<div><h4 class="text-3xl text-emerald-400 font-bold">৪৫+</h4><p>প্রকল্প</p></div>
+<div><h4 class="text-3xl text-emerald-400 font-bold">৫০০০+</h4><p>উপকারভোগী</p></div>
+<div><h4 class="text-3xl text-emerald-400 font-bold">৩২০+</h4><p>রক্তদান</p></div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer mt-24">
+
+<div class="h-[2px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-60"></div>
+
+<div class="py-20">
+<div class="max-w-7xl mx-auto px-6">
+
+<div class="grid md:grid-cols-3 gap-16 text-gray-300 items-start">
+
+<div class="space-y-4 text-center md:text-left">
+<h3 class="text-emerald-400 text-xl font-semibold">আল-হেরা এসোসিয়েশন</h3>
+<p class="text-sm text-gray-400">মানবতার কল্যাণে কাজ করা একটি স্বেচ্ছাসেবী সংগঠন।</p>
+</div>
+
+<div class="space-y-4 text-center">
+<h3 class="text-emerald-400 text-xl font-semibold">গুরুত্বপূর্ণ লিংক</h3>
+<div class="flex flex-col space-y-2 text-sm">
+<a href="index.html">Home</a>
+<a href="members.html">সদস্যবৃন্দ</a>
+<a href="donation.html">দান</a>
+<a href="contact.html">যোগাযোগ</a>
+</div>
+</div>
+
+<div class="space-y-4 text-center md:text-right">
+<h3 class="text-emerald-400 text-xl font-semibold">যোগাযোগ</h3>
+<p class="text-sm text-gray-400">কালীগঞ্জ, বাংলাদেশ</p>
+<p class="text-sm text-gray-400">মোবাইল: 017XXXXXXXX</p>
+
+<div class="flex justify-center md:justify-end items-center gap-5 mt-5">
+<a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
+<a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+<a href="#" class="social-icon"><i class="fa-brands fa-youtube"></i></a>
+</div>
+
+</div>
+
+</div>
+
+<div class="mt-16 pt-6 border-t border-white/10 text-center text-gray-500 text-sm">
+© ২০২৬ আল-হেরা এসোসিয়েশন |
+<span class="text-emerald-400 font-medium">Developed by Ms Sujon Sarkar</span>
+</div>
+
+</div>
+</div>
+
+</footer>
+
+<script>
+window.addEventListener("load",function(){
+document.getElementById("loader").style.display="none";
+});
+</script>
+
+</body>
+</html>

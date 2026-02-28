@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>গ্যালারি - আল-হেরা এসোসিয়েশন</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+html{scroll-behavior:smooth;}
+body{
+background:linear-gradient(135deg,#064e3b,#7f1d1d);
+font-family:'Hind Siliguri',sans-serif;
+color:white;
+}
+
+/* NAV */
+.nav-link{position:relative;padding-bottom:4px;}
+.nav-link.active::after,.nav-link:hover::after{
+content:"";position:absolute;left:0;bottom:0;width:100%;height:2px;background:#10b981;
+}
+#mobileMenu{display:none;}
+#mobileMenu.show{display:block;}
+
+/* GALLERY CARD */
+.gallery-card{
+background:rgba(255,255,255,.06);
+border-radius:25px;
+overflow:hidden;
+transition:.4s;
+box-shadow:0 0 25px rgba(16,185,129,.3);
+}
+.gallery-card:hover{
+box-shadow:0 0 40px rgba(16,185,129,.7);
+transform:translateY(-8px);
+}
+.gallery-img{
+overflow:hidden;
+}
+.gallery-img img{
+transition:transform .6s ease;
+}
+.gallery-card:hover img{
+transform:scale(1.15);
+}
+
+/* FOOTER */
+@keyframes luxuryGradient{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+.footer-bg{
+background:linear-gradient(-45deg,#021f17,#052e26,#3f0f0f,#7f1d1d);
+background-size:400% 400%;
+animation:luxuryGradient 18s ease infinite;
+}
+.footer-glass{
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(20px);
+border-radius:25px;
+box-shadow:0 0 40px rgba(16,185,129,.25);
+}
+.social-icon{
+width:45px;height:45px;
+display:flex;align-items:center;justify-content:center;
+border-radius:50%;
+background:rgba(255,255,255,.08);
+transition:.3s;
+}
+.social-icon:hover{
+transform:scale(1.2);
+box-shadow:0 0 20px rgba(16,185,129,.7);
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="bg-[#064e3b]/95 sticky top-0 z-50">
+<div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+<div>
+<h1 class="text-xl font-semibold text-emerald-400">আল-হেরা এসোসিয়েশন</h1>
+<p class="text-xs text-gray-300">Serving Humanity With Unity & Compassion</p>
+</div>
+
+<nav class="hidden md:flex space-x-8 text-sm">
+<a href="index.html" class="nav-link">Home</a>
+<a href="members.html" class="nav-link">সদস্যবৃন্দ</a>
+<a href="gallery.html" class="nav-link active">গ্যালারি</a>
+<a href="donation.html" class="nav-link">দান</a>
+<a href="form.html" class="nav-link">সদস্য ফরম</a>
+<a href="contact.html" class="nav-link">যোগাযোগ</a>
+</nav>
+
+<button id="menuBtn" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+</div>
+
+<div id="mobileMenu" class="bg-[#052e26] px-6 py-4 space-y-3 md:hidden">
+<a href="index.html">Home</a>
+<a href="members.html">সদস্যবৃন্দ</a>
+<a href="gallery.html">গ্যালারি</a>
+<a href="donation.html">দান</a>
+<a href="form.html">সদস্য ফরম</a>
+<a href="contact.html">যোগাযোগ</a>
+</div>
+</header>
+
+<!-- GALLERY SECTION -->
+<section class="py-20 px-6">
+<h2 class="text-4xl text-center text-emerald-300 mb-14">গ্যালারি</h2>
+
+<div class="max-w-7xl mx-auto grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+
+<!-- 12 Demo Gallery Items -->
+<script>
+const galleryImages = [
+"https://images.unsplash.com/photo-1593113630400-ea4288922497",
+"https://images.unsplash.com/photo-1559027615-cd4628902d4a",
+"https://images.unsplash.com/photo-1526256262350-7da7584cf5eb",
+"https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca"
+];
+
+for(let i=1;i<=12;i++){
+document.write(`
+<div class="gallery-card">
+<div class="gallery-img">
+<img src="${galleryImages[i%4]}?w=600&h=400&fit=crop"
+class="w-full h-56 object-cover">
+</div>
+<div class="p-5 text-center">
+<h3 class="text-lg font-semibold mb-2">কার্যক্রম ${i}</h3>
+<p class="text-sm text-gray-300">তারিখ: ২০২৬</p>
+</div>
+</div>
+`);
+}
+</script>
+
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer-bg mt-20 py-16 px-6 text-gray-300">
+<div class="max-w-7xl mx-auto footer-glass p-10 grid md:grid-cols-3 gap-10">
+<div>
+<h3 class="text-emerald-400 text-lg mb-4">আল-হেরা এসোসিয়েশন</h3>
+<p class="text-sm">মানবতার জন্য কাজ করে যাচ্ছে।</p>
+</div>
+<div>
+<h3 class="text-emerald-400 text-lg mb-4">যোগাযোগ</h3>
+<p>কালীগঞ্জ, বাংলাদেশ</p>
+<p>017XXXXXXXX</p>
+</div>
+<div>
+<h3 class="text-emerald-400 text-lg mb-4">সোশ্যাল</h3>
+<div class="flex space-x-4">
+<a href="#" class="social-icon text-blue-500"><i class="fa-brands fa-facebook-f"></i></a>
+<a href="#" class="social-icon text-pink-500"><i class="fa-brands fa-instagram"></i></a>
+<a href="#" class="social-icon text-red-600"><i class="fa-brands fa-youtube"></i></a>
+</div>
+</div>
+</div>
+<div class="text-center mt-8 text-sm">© ২০২৬ | Developed by Ms Sujon Sarkar</div>
+</footer>
+
+<script>
+document.getElementById("menuBtn").addEventListener("click",()=>{
+document.getElementById("mobileMenu").classList.toggle("show");
+});
+</script>
+
+</body>
+</html>
