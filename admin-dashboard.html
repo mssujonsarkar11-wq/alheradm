@@ -1,170 +1,221 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard</title>
 
-<script type="module" src="firebase-config.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 
 <style>
 body{
-margin:0;
-font-family:sans-serif;
 background:linear-gradient(135deg,#064e3b,#7f1d1d);
 color:white;
+font-family:sans-serif;
 }
-
-.container{
-max-width:1000px;
-margin:auto;
-padding:40px 20px;
-}
-
 .card{
 background:rgba(255,255,255,.08);
-padding:30px;
-border-radius:20px;
 backdrop-filter:blur(20px);
-margin-bottom:30px;
+border-radius:20px;
+padding:30px;
+margin-bottom:40px;
 }
-
 input{
-width:100%;
-padding:12px;
-margin:10px 0;
-border:none;
-border-radius:8px;
-}
-
-button{
-padding:10px 20px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
-.add-btn{
-background:#10b981;
-color:white;
-}
-
-.delete-btn{
-background:#ef4444;
-color:white;
-margin-top:10px;
-}
-
-.logout-btn{
-background:#111;
-color:white;
-float:right;
-}
-
-.member{
-background:rgba(255,255,255,.06);
-padding:20px;
-border-radius:15px;
-margin-top:15px;
+color:black;
 }
 </style>
+
+<!-- Firebase -->
+<script type="module" src="firebase-config.js"></script>
 </head>
+<body class="p-6">
 
-<body>
+<h1 class="text-3xl mb-8">Admin Dashboard</h1>
 
-<div class="container">
-
-<h2>Admin Dashboard</h2>
-<button class="logout-btn" onclick="logout()">Logout</button>
+<!-- ================= MEMBER SECTION ================= -->
 
 <div class="card">
-<h3>Add Member</h3>
+<h2 class="text-2xl mb-6">Add Member</h2>
 
-<input type="text" id="name" placeholder="Name">
-<input type="text" id="post" placeholder="Post">
-<input type="text" id="phone" placeholder="Phone">
-<input type="text" id="photoURL" placeholder="Photo URL (optional)">
+<input id="name" type="text" placeholder="Name"
+class="w-full mb-4 p-3 rounded bg-gray-200">
 
-<button class="add-btn" onclick="addMember()">Add Member</button>
+<input id="post" type="text" placeholder="Post"
+class="w-full mb-4 p-3 rounded bg-gray-200">
+
+<input id="phone" type="text" placeholder="Phone"
+class="w-full mb-4 p-3 rounded bg-gray-200">
+
+<input id="photo" type="text" placeholder="Photo URL (optional)"
+class="w-full mb-4 p-3 rounded bg-gray-200">
+
+<button onclick="addMember()"
+class="bg-green-600 px-6 py-2 rounded">
+Add Member
+</button>
 </div>
+
 
 <div class="card">
-<h3>All Members</h3>
-<div id="memberList"></div>
+<h2 class="text-2xl mb-6">All Members</h2>
+<div id="memberList" class="space-y-4"></div>
 </div>
 
+
+
+<!-- ================= GALLERY SECTION ================= -->
+
+<div class="card">
+<h2 class="text-2xl mb-6">Add Gallery</h2>
+
+<input id="gTitle" type="text" placeholder="Gallery Title"
+class="w-full mb-4 p-3 rounded bg-gray-200">
+
+<input id="gDate" type="text" placeholder="Date"
+class="w-full mb-4 p-3 rounded bg-gray-200">
+
+<input id="gImage" type="text" placeholder="Image URL"
+class="w-full mb-4 p-3 rounded bg-gray-200">
+
+<button onclick="addGallery()"
+class="bg-blue-600 px-6 py-2 rounded">
+Add Gallery
+</button>
 </div>
+
+
+<div class="card">
+<h2 class="text-2xl mb-6">All Gallery</h2>
+<div id="galleryList" class="space-y-4"></div>
+</div>
+
+
+
+<!-- ================= FIREBASE SCRIPT ================= -->
 
 <script type="module">
-import { auth, db } from "./firebase-config.js";
-import { onAuthStateChanged, signOut }
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { collection, addDoc, getDocs, deleteDoc, doc }
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const memberList = document.getElementById("memberList");
+import { db } from "./firebase-config.js";
+import {
+collection,
+addDoc,
+getDocs,
+deleteDoc,
+doc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-onAuthStateChanged(auth,(user)=>{
-if(!user){
-window.location.href="admin.html";
-}
-});
 
-window.logout = async function(){
-await signOut(auth);
-window.location.href="admin.html";
-}
+// ================= MEMBER =================
 
 window.addMember = async function(){
-const name=document.getElementById("name").value;
-const post=document.getElementById("post").value;
-const phone=document.getElementById("phone").value;
-const photoURL=document.getElementById("photoURL").value;
 
-if(!name || !post || !phone){
-alert("সব তথ্য পূরণ করুন");
-return;
-}
+const name = document.getElementById("name").value;
+const post = document.getElementById("post").value;
+const phone = document.getElementById("phone").value;
+const photo = document.getElementById("photo").value;
 
 await addDoc(collection(db,"members"),{
 name,
 post,
 phone,
-photoURL
+photo
 });
 
-alert("Member Added!");
-location.reload();
-}
+alert("Member Added");
+loadMembers();
+};
+
 
 async function loadMembers(){
 const snapshot = await getDocs(collection(db,"members"));
+const list = document.getElementById("memberList");
+list.innerHTML="";
 
-snapshot.forEach((d)=>{
-const data = d.data();
+snapshot.forEach((docSnap)=>{
+const data = docSnap.data();
 
-const div=document.createElement("div");
-div.className="member";
-
-div.innerHTML=`
-<img src="${data.photoURL || 'https://i.ibb.co/4pDNDk1/avatar.png'}"
-style="width:80px;height:80px;border-radius:50%;object-fit:cover;">
-<h4>${data.name}</h4>
+list.innerHTML += `
+<div class="bg-gray-800 p-4 rounded flex justify-between items-center">
+<div>
+<img src="${data.photo || 'https://via.placeholder.com/80'}"
+class="w-16 h-16 rounded-full mb-2">
+<h3 class="font-bold">${data.name}</h3>
 <p>${data.post}</p>
 <p>${data.phone}</p>
-<button class="delete-btn" onclick="deleteMember('${d.id}')">Delete</button>
+</div>
+<button onclick="deleteMember('${docSnap.id}')"
+class="bg-red-600 px-3 py-1 rounded">
+Delete
+</button>
+</div>
 `;
-
-memberList.appendChild(div);
 });
 }
 
+
 window.deleteMember = async function(id){
 await deleteDoc(doc(db,"members",id));
-location.reload();
-}
+loadMembers();
+};
+
 
 loadMembers();
+
+
+
+// ================= GALLERY =================
+
+window.addGallery = async function(){
+
+const title = document.getElementById("gTitle").value;
+const date = document.getElementById("gDate").value;
+const imageURL = document.getElementById("gImage").value;
+
+await addDoc(collection(db,"gallery"),{
+title,
+date,
+imageURL
+});
+
+alert("Gallery Added");
+loadGallery();
+};
+
+
+async function loadGallery(){
+const snapshot = await getDocs(collection(db,"gallery"));
+const list = document.getElementById("galleryList");
+list.innerHTML="";
+
+snapshot.forEach((docSnap)=>{
+const data = docSnap.data();
+
+list.innerHTML += `
+<div class="bg-gray-800 p-4 rounded flex justify-between items-center">
+<div>
+<img src="${data.imageURL}"
+class="w-24 mb-2">
+<h3 class="font-bold">${data.title}</h3>
+<p>${data.date}</p>
+</div>
+<button onclick="deleteGallery('${docSnap.id}')"
+class="bg-red-600 px-3 py-1 rounded">
+Delete
+</button>
+</div>
+`;
+});
+}
+
+
+window.deleteGallery = async function(id){
+await deleteDoc(doc(db,"gallery",id));
+loadGallery();
+};
+
+
+loadGallery();
+
 </script>
 
 </body>
