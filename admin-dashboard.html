@@ -9,50 +9,74 @@
 
 <body class="bg-gray-900 text-white p-6">
 
-<h1 class="text-3xl mb-8">Admin Dashboard</h1>
+<h1 class="text-3xl mb-10">Admin Dashboard</h1>
 
 <!-- ================= MEMBER SECTION ================= -->
 
-<div class="mb-12">
+<div class="mb-16">
+
 <h2 class="text-2xl mb-4">Add Member</h2>
 
-<input id="name" placeholder="Name" class="w-full mb-3 p-3 rounded text-black">
-<input id="post" placeholder="Post" class="w-full mb-3 p-3 rounded text-black">
-<input id="phone" placeholder="Phone" class="w-full mb-3 p-3 rounded text-black">
+<input id="name" type="text" placeholder="Name"
+class="w-full mb-3 p-3 rounded text-black">
 
-<select id="blood" class="w-full mb-3 p-3 rounded text-black">
+<input id="post" type="text" placeholder="Post"
+class="w-full mb-3 p-3 rounded text-black">
+
+<input id="phone" type="text" placeholder="Phone"
+class="w-full mb-3 p-3 rounded text-black">
+
+<select id="blood"
+class="w-full mb-3 p-3 rounded text-black">
 <option value="">Select Blood Group</option>
-<option>A+</option><option>A-</option>
-<option>B+</option><option>B-</option>
-<option>O+</option><option>O-</option>
-<option>AB+</option><option>AB-</option>
+<option>A+</option>
+<option>A-</option>
+<option>B+</option>
+<option>B-</option>
+<option>O+</option>
+<option>O-</option>
+<option>AB+</option>
+<option>AB-</option>
 </select>
 
-<input id="facebook" placeholder="Facebook URL" class="w-full mb-3 p-3 rounded text-black">
-<input id="photo" placeholder="Photo URL" class="w-full mb-3 p-3 rounded text-black">
+<input id="facebook" type="text" placeholder="Facebook URL"
+class="w-full mb-3 p-3 rounded text-black">
 
-<button onclick="addMember()" class="bg-green-600 px-6 py-2 rounded">
+<input id="photo" type="text" placeholder="Photo URL"
+class="w-full mb-3 p-3 rounded text-black">
+
+<button onclick="addMember()"
+class="bg-green-600 px-6 py-2 rounded">
 Add Member
 </button>
+
 </div>
 
-<div class="mb-16">
+<div class="mb-20">
 <h2 class="text-2xl mb-4">All Members</h2>
 <div id="memberList" class="space-y-4"></div>
 </div>
 
 <!-- ================= GALLERY SECTION ================= -->
 
-<div class="mb-12">
+<div class="mb-16">
+
 <h2 class="text-2xl mb-4">Add Gallery</h2>
 
-<input id="gTitle" placeholder="Title" class="w-full mb-3 p-3 rounded text-black">
-<input id="gDate" placeholder="Date" class="w-full mb-3 p-3 rounded text-black">
-<input id="gImage" placeholder="Image URL" class="w-full mb-3 p-3 rounded text-black">
+<input id="gTitle" type="text" placeholder="Title"
+class="w-full mb-3 p-3 rounded text-black">
 
-<button onclick="addGallery()" class="bg-blue-600 px-6 py-2 rounded">
+<input id="gDate" type="text" placeholder="Date"
+class="w-full mb-3 p-3 rounded text-black">
+
+<input id="gImage" type="text" placeholder="Image URL"
+class="w-full mb-3 p-3 rounded text-black">
+
+<button onclick="addGallery()"
+class="bg-blue-600 px-6 py-2 rounded">
 Add Gallery
 </button>
+
 </div>
 
 <div>
@@ -61,79 +85,149 @@ Add Gallery
 </div>
 
 <script type="module">
+
 import { db } from "./firebase-config.js";
 import {
-collection, addDoc, getDocs, deleteDoc, doc
+collection,
+addDoc,
+getDocs,
+deleteDoc,
+doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+/* ================= MEMBER ================= */
+
 window.addMember = async function(){
+
+const nameValue = document.getElementById("name").value;
+const postValue = document.getElementById("post").value;
+const phoneValue = document.getElementById("phone").value;
+const bloodValue = document.getElementById("blood").value;
+const facebookValue = document.getElementById("facebook").value;
+const photoValue = document.getElementById("photo").value;
+
+if(!nameValue || !postValue || !phoneValue){
+alert("Name, Post, Phone required");
+return;
+}
+
 await addDoc(collection(db,"members"),{
-name: name.value,
-post: post.value,
-phone: phone.value,
-blood: blood.value,
-facebook: facebook.value,
-photo: photo.value
+name: nameValue,
+post: postValue,
+phone: phoneValue,
+blood: bloodValue || "",
+facebook: facebookValue || "",
+photo: photoValue || ""
 });
+
+alert("Member Added Successfully");
+
+clearMemberForm();
 loadMembers();
 };
 
+function clearMemberForm(){
+document.getElementById("name").value="";
+document.getElementById("post").value="";
+document.getElementById("phone").value="";
+document.getElementById("blood").value="";
+document.getElementById("facebook").value="";
+document.getElementById("photo").value="";
+}
+
 async function loadMembers(){
 const snapshot = await getDocs(collection(db,"members"));
-memberList.innerHTML="";
+const list = document.getElementById("memberList");
+list.innerHTML="";
+
 snapshot.forEach(d=>{
 const data=d.data();
-memberList.innerHTML+=`
-<div class="bg-gray-800 p-4 rounded flex justify-between">
+
+list.innerHTML+=`
+<div class="bg-gray-800 p-4 rounded flex justify-between items-center">
 <div>
-<h3>${data.name}</h3>
+<h3 class="font-bold">${data.name}</h3>
 <p>${data.post}</p>
 <p>${data.phone}</p>
 <p>${data.blood}</p>
-<a href="${data.facebook}" target="_blank">FB</a>
+${data.facebook ? `<a href="${data.facebook}" target="_blank" class="text-blue-400">FB</a>` : ""}
 </div>
-<button onclick="deleteMember('${d.id}')" class="bg-red-600 px-3 rounded">Delete</button>
-</div>`;
+<button onclick="deleteMember('${d.id}')"
+class="bg-red-600 px-3 py-1 rounded">
+Delete
+</button>
+</div>
+`;
 });
 }
 
-window.deleteMember=async function(id){
+window.deleteMember = async function(id){
 await deleteDoc(doc(db,"members",id));
 loadMembers();
 };
 
-window.addGallery=async function(){
+/* ================= GALLERY ================= */
+
+window.addGallery = async function(){
+
+const title = document.getElementById("gTitle").value;
+const date = document.getElementById("gDate").value;
+const image = document.getElementById("gImage").value;
+
+if(!title || !image){
+alert("Title and Image required");
+return;
+}
+
 await addDoc(collection(db,"gallery"),{
-title:gTitle.value,
-date:gDate.value,
-imageURL:gImage.value
+title: title,
+date: date || "",
+imageURL: image
 });
+
+alert("Gallery Added");
+
+clearGalleryForm();
 loadGallery();
 };
 
+function clearGalleryForm(){
+document.getElementById("gTitle").value="";
+document.getElementById("gDate").value="";
+document.getElementById("gImage").value="";
+}
+
 async function loadGallery(){
-const snapshot=await getDocs(collection(db,"gallery"));
-galleryList.innerHTML="";
+const snapshot = await getDocs(collection(db,"gallery"));
+const list = document.getElementById("galleryList");
+list.innerHTML="";
+
 snapshot.forEach(d=>{
 const data=d.data();
-galleryList.innerHTML+=`
-<div class="bg-gray-800 p-4 rounded flex justify-between">
+
+list.innerHTML+=`
+<div class="bg-gray-800 p-4 rounded flex justify-between items-center">
 <div>
-<h3>${data.title}</h3>
+<h3 class="font-bold">${data.title}</h3>
 <p>${data.date}</p>
 </div>
-<button onclick="deleteGallery('${d.id}')" class="bg-red-600 px-3 rounded">Delete</button>
-</div>`;
+<button onclick="deleteGallery('${d.id}')"
+class="bg-red-600 px-3 py-1 rounded">
+Delete
+</button>
+</div>
+`;
 });
 }
 
-window.deleteGallery=async function(id){
+window.deleteGallery = async function(id){
 await deleteDoc(doc(db,"gallery",id));
 loadGallery();
 };
 
 loadMembers();
 loadGallery();
+
 </script>
 
 </body>
