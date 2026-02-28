@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+
+<script type="module" src="firebase-config.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:sans-serif;
+background:linear-gradient(135deg,#064e3b,#7f1d1d);
+color:white;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+padding:40px 20px;
+}
+
+.card{
+background:rgba(255,255,255,.08);
+padding:30px;
+border-radius:20px;
+backdrop-filter:blur(20px);
+margin-bottom:30px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:none;
+border-radius:8px;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.add-btn{
+background:#10b981;
+color:white;
+}
+
+.delete-btn{
+background:#ef4444;
+color:white;
+margin-top:10px;
+}
+
+.logout-btn{
+background:#111;
+color:white;
+float:right;
+}
+
+.member{
+background:rgba(255,255,255,.06);
+padding:20px;
+border-radius:15px;
+margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Admin Dashboard</h2>
+<button class="logout-btn" onclick="logout()">Logout</button>
+
+<div class="card">
+<h3>Add Member</h3>
+
+<input type="text" id="name" placeholder="Name">
+<input type="text" id="post" placeholder="Post">
+<input type="text" id="phone" placeholder="Phone">
+<input type="text" id="photoURL" placeholder="Photo URL (optional)">
+
+<button class="add-btn" onclick="addMember()">Add Member</button>
+</div>
+
+<div class="card">
+<h3>All Members</h3>
+<div id="memberList"></div>
+</div>
+
+</div>
+
+<script type="module">
+import { auth, db } from "./firebase-config.js";
+import { onAuthStateChanged, signOut }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { collection, addDoc, getDocs, deleteDoc, doc }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const memberList = document.getElementById("memberList");
+
+onAuthStateChanged(auth,(user)=>{
+if(!user){
+window.location.href="admin.html";
+}
+});
+
+window.logout = async function(){
+await signOut(auth);
+window.location.href="admin.html";
+}
+
+window.addMember = async function(){
+const name=document.getElementById("name").value;
+const post=document.getElementById("post").value;
+const phone=document.getElementById("phone").value;
+const photoURL=document.getElementById("photoURL").value;
+
+if(!name || !post || !phone){
+alert("সব তথ্য পূরণ করুন");
+return;
+}
+
+await addDoc(collection(db,"members"),{
+name,
+post,
+phone,
+photoURL
+});
+
+alert("Member Added!");
+location.reload();
+}
+
+async function loadMembers(){
+const snapshot = await getDocs(collection(db,"members"));
+
+snapshot.forEach((d)=>{
+const data = d.data();
+
+const div=document.createElement("div");
+div.className="member";
+
+div.innerHTML=`
+<img src="${data.photoURL || 'https://i.ibb.co/4pDNDk1/avatar.png'}"
+style="width:80px;height:80px;border-radius:50%;object-fit:cover;">
+<h4>${data.name}</h4>
+<p>${data.post}</p>
+<p>${data.phone}</p>
+<button class="delete-btn" onclick="deleteMember('${d.id}')">Delete</button>
+`;
+
+memberList.appendChild(div);
+});
+}
+
+window.deleteMember = async function(id){
+await deleteDoc(doc(db,"members",id));
+location.reload();
+}
+
+loadMembers();
+</script>
+
+</body>
+</html>
