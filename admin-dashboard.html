@@ -1,221 +1,139 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
-
-<style>
-body{
-background:linear-gradient(135deg,#064e3b,#7f1d1d);
-color:white;
-font-family:sans-serif;
-}
-.card{
-background:rgba(255,255,255,.08);
-backdrop-filter:blur(20px);
-border-radius:20px;
-padding:30px;
-margin-bottom:40px;
-}
-input{
-color:black;
-}
-</style>
-
-<!-- Firebase -->
 <script type="module" src="firebase-config.js"></script>
 </head>
-<body class="p-6">
+
+<body class="bg-gray-900 text-white p-6">
 
 <h1 class="text-3xl mb-8">Admin Dashboard</h1>
 
 <!-- ================= MEMBER SECTION ================= -->
 
-<div class="card">
-<h2 class="text-2xl mb-6">Add Member</h2>
+<div class="mb-12">
+<h2 class="text-2xl mb-4">Add Member</h2>
 
-<input id="name" type="text" placeholder="Name"
-class="w-full mb-4 p-3 rounded bg-gray-200">
+<input id="name" placeholder="Name" class="w-full mb-3 p-3 rounded text-black">
+<input id="post" placeholder="Post" class="w-full mb-3 p-3 rounded text-black">
+<input id="phone" placeholder="Phone" class="w-full mb-3 p-3 rounded text-black">
 
-<input id="post" type="text" placeholder="Post"
-class="w-full mb-4 p-3 rounded bg-gray-200">
+<select id="blood" class="w-full mb-3 p-3 rounded text-black">
+<option value="">Select Blood Group</option>
+<option>A+</option><option>A-</option>
+<option>B+</option><option>B-</option>
+<option>O+</option><option>O-</option>
+<option>AB+</option><option>AB-</option>
+</select>
 
-<input id="phone" type="text" placeholder="Phone"
-class="w-full mb-4 p-3 rounded bg-gray-200">
+<input id="facebook" placeholder="Facebook URL" class="w-full mb-3 p-3 rounded text-black">
+<input id="photo" placeholder="Photo URL" class="w-full mb-3 p-3 rounded text-black">
 
-<input id="photo" type="text" placeholder="Photo URL (optional)"
-class="w-full mb-4 p-3 rounded bg-gray-200">
-
-<button onclick="addMember()"
-class="bg-green-600 px-6 py-2 rounded">
+<button onclick="addMember()" class="bg-green-600 px-6 py-2 rounded">
 Add Member
 </button>
 </div>
 
-
-<div class="card">
-<h2 class="text-2xl mb-6">All Members</h2>
+<div class="mb-16">
+<h2 class="text-2xl mb-4">All Members</h2>
 <div id="memberList" class="space-y-4"></div>
 </div>
 
-
-
 <!-- ================= GALLERY SECTION ================= -->
 
-<div class="card">
-<h2 class="text-2xl mb-6">Add Gallery</h2>
+<div class="mb-12">
+<h2 class="text-2xl mb-4">Add Gallery</h2>
 
-<input id="gTitle" type="text" placeholder="Gallery Title"
-class="w-full mb-4 p-3 rounded bg-gray-200">
+<input id="gTitle" placeholder="Title" class="w-full mb-3 p-3 rounded text-black">
+<input id="gDate" placeholder="Date" class="w-full mb-3 p-3 rounded text-black">
+<input id="gImage" placeholder="Image URL" class="w-full mb-3 p-3 rounded text-black">
 
-<input id="gDate" type="text" placeholder="Date"
-class="w-full mb-4 p-3 rounded bg-gray-200">
-
-<input id="gImage" type="text" placeholder="Image URL"
-class="w-full mb-4 p-3 rounded bg-gray-200">
-
-<button onclick="addGallery()"
-class="bg-blue-600 px-6 py-2 rounded">
+<button onclick="addGallery()" class="bg-blue-600 px-6 py-2 rounded">
 Add Gallery
 </button>
 </div>
 
-
-<div class="card">
-<h2 class="text-2xl mb-6">All Gallery</h2>
+<div>
+<h2 class="text-2xl mb-4">All Gallery</h2>
 <div id="galleryList" class="space-y-4"></div>
 </div>
 
-
-
-<!-- ================= FIREBASE SCRIPT ================= -->
-
 <script type="module">
-
 import { db } from "./firebase-config.js";
 import {
-collection,
-addDoc,
-getDocs,
-deleteDoc,
-doc
+collection, addDoc, getDocs, deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-
-// ================= MEMBER =================
-
 window.addMember = async function(){
-
-const name = document.getElementById("name").value;
-const post = document.getElementById("post").value;
-const phone = document.getElementById("phone").value;
-const photo = document.getElementById("photo").value;
-
 await addDoc(collection(db,"members"),{
-name,
-post,
-phone,
-photo
+name: name.value,
+post: post.value,
+phone: phone.value,
+blood: blood.value,
+facebook: facebook.value,
+photo: photo.value
 });
-
-alert("Member Added");
 loadMembers();
 };
 
-
 async function loadMembers(){
 const snapshot = await getDocs(collection(db,"members"));
-const list = document.getElementById("memberList");
-list.innerHTML="";
-
-snapshot.forEach((docSnap)=>{
-const data = docSnap.data();
-
-list.innerHTML += `
-<div class="bg-gray-800 p-4 rounded flex justify-between items-center">
+memberList.innerHTML="";
+snapshot.forEach(d=>{
+const data=d.data();
+memberList.innerHTML+=`
+<div class="bg-gray-800 p-4 rounded flex justify-between">
 <div>
-<img src="${data.photo || 'https://via.placeholder.com/80'}"
-class="w-16 h-16 rounded-full mb-2">
-<h3 class="font-bold">${data.name}</h3>
+<h3>${data.name}</h3>
 <p>${data.post}</p>
 <p>${data.phone}</p>
+<p>${data.blood}</p>
+<a href="${data.facebook}" target="_blank">FB</a>
 </div>
-<button onclick="deleteMember('${docSnap.id}')"
-class="bg-red-600 px-3 py-1 rounded">
-Delete
-</button>
-</div>
-`;
+<button onclick="deleteMember('${d.id}')" class="bg-red-600 px-3 rounded">Delete</button>
+</div>`;
 });
 }
 
-
-window.deleteMember = async function(id){
+window.deleteMember=async function(id){
 await deleteDoc(doc(db,"members",id));
 loadMembers();
 };
 
-
-loadMembers();
-
-
-
-// ================= GALLERY =================
-
-window.addGallery = async function(){
-
-const title = document.getElementById("gTitle").value;
-const date = document.getElementById("gDate").value;
-const imageURL = document.getElementById("gImage").value;
-
+window.addGallery=async function(){
 await addDoc(collection(db,"gallery"),{
-title,
-date,
-imageURL
+title:gTitle.value,
+date:gDate.value,
+imageURL:gImage.value
 });
-
-alert("Gallery Added");
 loadGallery();
 };
 
-
 async function loadGallery(){
-const snapshot = await getDocs(collection(db,"gallery"));
-const list = document.getElementById("galleryList");
-list.innerHTML="";
-
-snapshot.forEach((docSnap)=>{
-const data = docSnap.data();
-
-list.innerHTML += `
-<div class="bg-gray-800 p-4 rounded flex justify-between items-center">
+const snapshot=await getDocs(collection(db,"gallery"));
+galleryList.innerHTML="";
+snapshot.forEach(d=>{
+const data=d.data();
+galleryList.innerHTML+=`
+<div class="bg-gray-800 p-4 rounded flex justify-between">
 <div>
-<img src="${data.imageURL}"
-class="w-24 mb-2">
-<h3 class="font-bold">${data.title}</h3>
+<h3>${data.title}</h3>
 <p>${data.date}</p>
 </div>
-<button onclick="deleteGallery('${docSnap.id}')"
-class="bg-red-600 px-3 py-1 rounded">
-Delete
-</button>
-</div>
-`;
+<button onclick="deleteGallery('${d.id}')" class="bg-red-600 px-3 rounded">Delete</button>
+</div>`;
 });
 }
 
-
-window.deleteGallery = async function(id){
+window.deleteGallery=async function(id){
 await deleteDoc(doc(db,"gallery",id));
 loadGallery();
 };
 
-
+loadMembers();
 loadGallery();
-
 </script>
 
 </body>
