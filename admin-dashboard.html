@@ -11,45 +11,29 @@
 
 <h1 class="text-3xl mb-10">Admin Dashboard</h1>
 
-<!-- ================= MEMBER SECTION ================= -->
+<!-- ================= MEMBER ================= -->
 
 <div class="mb-16">
-
 <h2 class="text-2xl mb-4">Add Member</h2>
 
-<input id="name" type="text" placeholder="Name"
-class="w-full mb-3 p-3 rounded text-black">
+<input id="name" type="text" placeholder="Name" class="w-full mb-3 p-3 rounded text-black">
+<input id="post" type="text" placeholder="Post" class="w-full mb-3 p-3 rounded text-black">
+<input id="phone" type="text" placeholder="Phone" class="w-full mb-3 p-3 rounded text-black">
 
-<input id="post" type="text" placeholder="Post"
-class="w-full mb-3 p-3 rounded text-black">
-
-<input id="phone" type="text" placeholder="Phone"
-class="w-full mb-3 p-3 rounded text-black">
-
-<select id="blood"
-class="w-full mb-3 p-3 rounded text-black">
+<select id="blood" class="w-full mb-3 p-3 rounded text-black">
 <option value="">Select Blood Group</option>
-<option>A+</option>
-<option>A-</option>
-<option>B+</option>
-<option>B-</option>
-<option>O+</option>
-<option>O-</option>
-<option>AB+</option>
-<option>AB-</option>
+<option>A+</option><option>A-</option>
+<option>B+</option><option>B-</option>
+<option>O+</option><option>O-</option>
+<option>AB+</option><option>AB-</option>
 </select>
 
-<input id="facebook" type="text" placeholder="Facebook URL"
-class="w-full mb-3 p-3 rounded text-black">
+<input id="facebook" type="text" placeholder="Facebook URL" class="w-full mb-3 p-3 rounded text-black">
+<input id="photo" type="text" placeholder="Photo URL" class="w-full mb-3 p-3 rounded text-black">
 
-<input id="photo" type="text" placeholder="Photo URL"
-class="w-full mb-3 p-3 rounded text-black">
-
-<button onclick="addMember()"
-class="bg-green-600 px-6 py-2 rounded">
+<button onclick="addMember()" class="bg-green-600 px-6 py-2 rounded">
 Add Member
 </button>
-
 </div>
 
 <div class="mb-20">
@@ -57,26 +41,18 @@ Add Member
 <div id="memberList" class="space-y-4"></div>
 </div>
 
-<!-- ================= GALLERY SECTION ================= -->
+<!-- ================= GALLERY ================= -->
 
 <div class="mb-16">
-
 <h2 class="text-2xl mb-4">Add Gallery</h2>
 
-<input id="gTitle" type="text" placeholder="Title"
-class="w-full mb-3 p-3 rounded text-black">
+<input id="gTitle" type="text" placeholder="Title" class="w-full mb-3 p-3 rounded text-black">
+<input id="gDate" type="text" placeholder="Date" class="w-full mb-3 p-3 rounded text-black">
+<input id="gImage" type="text" placeholder="Image URL" class="w-full mb-3 p-3 rounded text-black">
 
-<input id="gDate" type="text" placeholder="Date"
-class="w-full mb-3 p-3 rounded text-black">
-
-<input id="gImage" type="text" placeholder="Image URL"
-class="w-full mb-3 p-3 rounded text-black">
-
-<button onclick="addGallery()"
-class="bg-blue-600 px-6 py-2 rounded">
+<button onclick="addGallery()" class="bg-blue-600 px-6 py-2 rounded">
 Add Gallery
 </button>
-
 </div>
 
 <div>
@@ -86,18 +62,34 @@ Add Gallery
 
 <script type="module">
 
-import { db } from "./firebase-config.js";
+import { db, auth } from "./firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
-collection,
-addDoc,
-getDocs,
-deleteDoc,
-doc
+collection, addDoc, getDocs,
+deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* ================= MEMBER ================= */
+/* ========= LOGIN CHECK ========= */
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    alert("Login required");
+    window.location.href = "admin-login.html";
+  } else {
+    console.log("Logged in:", user.email);
+  }
+});
+
+/* ========= MEMBER ========= */
 
 window.addMember = async function(){
+
+if(!auth.currentUser){
+alert("Login required");
+return;
+}
+
+try {
 
 const nameValue = document.getElementById("name").value;
 const postValue = document.getElementById("post").value;
@@ -124,6 +116,12 @@ alert("Member Added Successfully");
 
 clearMemberForm();
 loadMembers();
+
+} catch(error){
+console.error(error);
+alert(error.message);
+}
+
 };
 
 function clearMemberForm(){
@@ -139,10 +137,8 @@ async function loadMembers(){
 const snapshot = await getDocs(collection(db,"members"));
 const list = document.getElementById("memberList");
 list.innerHTML="";
-
 snapshot.forEach(d=>{
 const data=d.data();
-
 list.innerHTML+=`
 <div class="bg-gray-800 p-4 rounded flex justify-between items-center">
 <div>
@@ -152,12 +148,8 @@ list.innerHTML+=`
 <p>${data.blood}</p>
 ${data.facebook ? `<a href="${data.facebook}" target="_blank" class="text-blue-400">FB</a>` : ""}
 </div>
-<button onclick="deleteMember('${d.id}')"
-class="bg-red-600 px-3 py-1 rounded">
-Delete
-</button>
-</div>
-`;
+<button onclick="deleteMember('${d.id}')" class="bg-red-600 px-3 py-1 rounded">Delete</button>
+</div>`;
 });
 }
 
@@ -166,9 +158,16 @@ await deleteDoc(doc(db,"members",id));
 loadMembers();
 };
 
-/* ================= GALLERY ================= */
+/* ========= GALLERY ========= */
 
 window.addGallery = async function(){
+
+if(!auth.currentUser){
+alert("Login required");
+return;
+}
+
+try {
 
 const title = document.getElementById("gTitle").value;
 const date = document.getElementById("gDate").value;
@@ -189,6 +188,11 @@ alert("Gallery Added");
 
 clearGalleryForm();
 loadGallery();
+
+} catch(error){
+alert(error.message);
+}
+
 };
 
 function clearGalleryForm(){
@@ -201,22 +205,16 @@ async function loadGallery(){
 const snapshot = await getDocs(collection(db,"gallery"));
 const list = document.getElementById("galleryList");
 list.innerHTML="";
-
 snapshot.forEach(d=>{
 const data=d.data();
-
 list.innerHTML+=`
 <div class="bg-gray-800 p-4 rounded flex justify-between items-center">
 <div>
 <h3 class="font-bold">${data.title}</h3>
 <p>${data.date}</p>
 </div>
-<button onclick="deleteGallery('${d.id}')"
-class="bg-red-600 px-3 py-1 rounded">
-Delete
-</button>
-</div>
-`;
+<button onclick="deleteGallery('${d.id}')" class="bg-red-600 px-3 py-1 rounded">Delete</button>
+</div>`;
 });
 }
 
